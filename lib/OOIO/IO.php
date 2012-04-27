@@ -47,8 +47,7 @@ class IO
         return static::DefaultContext()->append($filename, $data);
     }
 
-    # Creates a temporary file and returns a
-    # Stream instance.
+    # Creates a temporary file and returns a Stream instance.
     #
     # Returns a new Stream.
     static function tempfile()
@@ -67,5 +66,13 @@ class IO
     static function pipe()
     {
         return Socket::pair(STREAM_PF_UNIX, STREAM_SOCK_STREAM, STREAM_IPPROTO_IP);
+    }
+
+    # Factory for Selectors.
+    #
+    # Returns an \OOIO\Selector.
+    static function select()
+    {
+        return new Selector;
     }
 }
