@@ -1,0 +1,21 @@
+{
+    "name": "chh/ooio",
+    "description": "Provides a lightweight, object-oriented IO package.",
+    "authors": [
+        {
+            "name": "Christoph Hochstrasser",
+            "email": "christoph.hochstrasser@gmail.com",
+            "homepage": "http://christophh.net"
+        }
+    ],
+    "keywords": [
+        "io"
+    ],
+    "require": {
+        "php": ">=5.3.3",
+        "evenement/evenement": "*"
+    },
+    "autoload": {
+        "classmap": ["lib/"]
+    }
+}
