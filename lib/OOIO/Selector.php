@@ -19,7 +19,10 @@ class Selector
         $write = array(),
 
         # List of streams to watch for errors.
-        $except = array();
+        $except = array(),
+
+        # Maps FDs to stream instances.
+        $streams = array();
 
     # Checks which registered streams are ready.
     #
@@ -34,19 +37,16 @@ class Selector
     # Returns the readable, writeable and error'd streams as three lists.
     function select($timeout = null)
     {
-        $getFd = function($stream) { return $stream->getFileDescriptor(); };
-
-        # Collect file descriptors for stream_select().
-        $r = array_map($getFd, $this->read);
-        $w = array_map($getFd, $this->write);
-        $e = array_map($getFd, $this->except);
+        $read = $this->read;
+        $write = $this->write;
+        $except = $this->except;
 
         if ($timeout !== null) {
             # Convert timeout to microseconds.
             $timeout *= 1e6;
         }
 
-        $readyCount = stream_select($r, $w, $e, $timeout === null ? null : 0, $timeout);
+        $readyCount = stream_select($read, $write, $except, $timeout === null ? null : 0, $timeout);
 
         # Response is a list of read, write, except lists of streams (in that order).
         $resp = array(array(), array(), array());
@@ -55,16 +55,16 @@ class Selector
             return $resp;
         }
 
-        foreach ($r as $fd) {
-            $resp[0][] = $this->read[(int) $fd];
+        foreach ($read as $fd) {
+            $resp[0][] = $this->streams[(int) $fd];
         }
 
-        foreach ($w as $fd) {
-            $resp[1][] = $this->write[(int) $fd];
+        foreach ($write as $fd) {
+            $resp[1][] = $this->streams[(int) $fd];
         }
 
-        foreach ($e as $fd) {
-            $resp[2][] = $this->except[(int) $fd];
+        foreach ($except as $fd) {
+            $resp[2][] = $this->streams[(int) $fd];
         }
 
         return $resp;
@@ -100,18 +100,22 @@ class Selector
         foreach (str_split($modes) as $mode) {
             switch ($mode) {
             case self::WATCH_READ:
-                $this->read[(int) $fd] = $stream;
+                $this->read[] = $fd;
                 break;
             case self::WATCH_WRITE:
-                $this->write[(int) $fd] = $stream;
+                $this->write[] = $fd;
                 break;
             case self::WATCH_EXCEPT:
-                $this->except[(int) $fd] = $stream;
+                $this->except[] = $fd;
                 break;
             default:
                 throw new \InvalidArgumentException("Invalid Mode '$mode'.");
             }
         }
+
+        # Store the stream instance, so we can return it in select()
+        # instead of the FD.
+        $this->streams[(int) $fd] = $stream;
 
         return $this;
     }
