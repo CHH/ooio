@@ -38,17 +38,4 @@ class StreamTest extends \PHPUnit_Framework_TestCase
 
         $this->assertEquals("Hello World", $this->stream->read());
     }
-
-    function testIsTty()
-    {
-        if (strtoupper(substr(PHP_OS, 0, 3)) === "WIN") {
-            return $this->markTestSkipped();
-        }
-
-        $stdin = new Stream(STDIN);
-        $this->assertTrue($stdin->isTty());
-
-        $f = new Stream(tmpfile());
-        $this->assertFalse($f->isTty());
-    }
 }
