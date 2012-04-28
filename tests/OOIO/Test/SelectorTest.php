@@ -18,5 +18,12 @@ class SelectorTest extends \PHPUnit_Framework_TestCase
         list($r) = $selector->select(0);
 
         $this->assertEquals(1, count($r));
+        $r[0]->gets();
+
+        $selector->unregister($pipe[1]);
+        $pipe[0]->puts("Hello World");
+
+        list($r) = $selector->select(0);
+        $this->assertEquals(0, count($r));
     }
 }

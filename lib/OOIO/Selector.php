@@ -2,13 +2,31 @@
 
 namespace OOIO;
 
+# Public: Watches stream instances for stream events.
+#
+# Examples
+#
+#   <?php
+#   use OOIO\Selector,
+#       OOIO\IO;
+#
+#   $select = new Selector;
+#   $select->register(IO::open("php://stdin"), 'r');
+#
+#   list($r) = $selector->select();
+#
+#   if ($r) {
+#       echo "You entered ".$r[0]->gets()."\n";
+#   }
+#
 class Selector
 {
     const WATCH_READ = 'r';
     const WATCH_WRITE = 'w';
     const WATCH_EXCEPT = 'e';
 
-    # Use this timeout value to select without timeout.
+    # Use this timeout value to return immediately from
+    # the select() call, even when no stream is ready.
     const TV_NOWAIT = 0;
 
     protected
@@ -26,13 +44,7 @@ class Selector
 
     # Checks which registered streams are ready.
     #
-    # timeout - Timeout in seconds, returns immediately when given '0'.
-    #           Waits until one registered stream becomes ready when
-    #           Null is given as timeout.
-    #
-    # Todo
-    #
-    #   - More efficient mapping of file descriptors to stream instances.
+    # timeout - Timeout in microseconds.
     #
     # Returns the readable, writeable and error'd streams as three lists.
     function select($timeout = null)
@@ -41,19 +53,10 @@ class Selector
         $write = $this->write;
         $except = $this->except;
 
-        if ($timeout !== null) {
-            # Convert timeout to microseconds.
-            $timeout *= 1e6;
-        }
-
-        $readyCount = stream_select($read, $write, $except, $timeout === null ? null : 0, $timeout);
-
         # Response is a list of read, write, except lists of streams (in that order).
         $resp = array(array(), array(), array());
 
-        if ($readyCount === 0) {
-            return $resp;
-        }
+        @stream_select($read, $write, $except, $timeout === null ? null : 0, $timeout);
 
         foreach ($read as $fd) {
             $resp[0][] = $this->streams[(int) $fd];
@@ -97,16 +100,16 @@ class Selector
     {
         $fd = $stream->getFileDescriptor();
 
-        foreach (str_split($modes) as $mode) {
+        foreach (str_split((string) $modes) as $mode) {
             switch ($mode) {
             case self::WATCH_READ:
-                $this->read[] = $fd;
+                $this->read[(int) $fd] = $fd;
                 break;
             case self::WATCH_WRITE:
-                $this->write[] = $fd;
+                $this->write[(int) $fd] = $fd;
                 break;
             case self::WATCH_EXCEPT:
-                $this->except[] = $fd;
+                $this->except[(int) $fd] = $fd;
                 break;
             default:
                 throw new \InvalidArgumentException("Invalid Mode '$mode'.");
@@ -129,8 +132,9 @@ class Selector
     {
         $fd = $stream->getFileDescriptor();
 
-        unset($this->read[$fd]);
-        unset($this->write[$fd]);
-        unset($this->except[$fd]);
+        unset($this->read[(int) $fd]);
+        unset($this->write[(int) $fd]);
+        unset($this->except[(int) $fd]);
+        unset($this->streams[(int) $fd]);
     }
 }
