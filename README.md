@@ -1,6 +1,6 @@
 # OOIO
 
-_Object oriented IO for PHP._
+_A lightweight, object oriented interface to PHP's streams._
 
 ## Install
 

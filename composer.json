@@ -1,6 +1,6 @@
 {
     "name": "chh/ooio",
-    "description": "Provides a lightweight, object-oriented IO package.",
+    "description": "Provides a lightweight, object-oriented interface to PHP's streams.",
     "authors": [
         {
             "name": "Christoph Hochstrasser",
@@ -9,11 +9,10 @@
         }
     ],
     "keywords": [
-        "io"
+        "io", "stream"
     ],
     "require": {
-        "php": ">=5.3.3",
-        "evenement/evenement": "*"
+        "php": ">=5.3.3"
     },
     "autoload": {
         "classmap": ["lib/"]
