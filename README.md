@@ -22,5 +22,5 @@ Then run composer:
 
     % php composer.phar install
 
-## Usage
+[composer]: http://getcomposer.org
 
