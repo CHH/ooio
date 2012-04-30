@@ -31,5 +31,5 @@ interface Closeable
 interface FileDescriptor
 {
     # Returns the wrapped system file descriptor for the stream.
-    function getFileDescriptor();
+    function toFileDescriptor();
 }

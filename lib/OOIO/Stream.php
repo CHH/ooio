@@ -27,7 +27,7 @@ class Stream
         $this->stream = $stream;
     }
 
-    function getFileDescriptor()
+    function toFileDescriptor()
     {
         return $this->stream;
     }

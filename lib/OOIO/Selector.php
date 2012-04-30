@@ -98,7 +98,7 @@ class Selector
     #
     function register(FileDescriptor $stream, $modes)
     {
-        $fd = $stream->getFileDescriptor();
+        $fd = $stream->toFileDescriptor();
 
         foreach (str_split((string) $modes) as $mode) {
             switch ($mode) {
@@ -130,7 +130,7 @@ class Selector
     # Returns Nothing.
     function unregister(FileDescriptor $stream)
     {
-        $fd = $stream->getFileDescriptor();
+        $fd = $stream->toFileDescriptor();
 
         unset($this->read[(int) $fd]);
         unset($this->write[(int) $fd]);

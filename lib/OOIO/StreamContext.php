@@ -75,16 +75,25 @@ class StreamContext
         return $this->write($filename, $data, FILE_APPEND);
     }
 
+    # Opens the file.
+    #
+    # filename - File name as String.
+    # mode     - Open mode, same as for `fopen`.
+    # callback - Optional callback, gets passed the Stream instance. The Stream
+    #            gets closed after the callback returned.
+    #
+    # Returns the Stream when no callback was passed, otherwise returns the callback's
+    # return value.
     function open($filename, $mode = "", $callback = null)
     {
-        $res    = fopen($filename, $mode, false, $this->context);
-        $stream = new Stream($res);
+        $fd = fopen($filename, $mode, false, $this->context);
+        $stream = new Stream($fd);
 
         if (is_callable($callback)) {
-            $result = call_user_func($callback, $stream);
+            $ret = call_user_func($callback, $stream);
             $stream->close();
 
-            return $result;
+            return $ret;
         }
 
         return $stream;
