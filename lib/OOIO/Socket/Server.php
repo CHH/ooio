@@ -2,7 +2,8 @@
 
 namespace OOIO\Socket;
 
-use OOIO\Stream;
+use OOIO\Stream,
+    OOIO\Exception;
 
 class Server implements FileDescriptor
 {
@@ -11,16 +12,16 @@ class Server implements FileDescriptor
 
     function __construct($spec)
     {
-        $socket = stream_socket_server($spec, $errorCode, $errorMsg);
+        $socket = @stream_socket_server($spec, $errorCode, $errorMsg);
 
         if (!$socket) {
-            # Raise error.
+            throw new Exception("Could not bind to Socket '$spec'. $errorMsg");
         }
 
         $this->socket = $socket;
     }
 
-    function getFileDescriptor()
+    function toFileDescriptor()
     {
         return $this->socket;
     }
