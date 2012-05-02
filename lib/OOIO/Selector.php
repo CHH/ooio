@@ -11,7 +11,7 @@ namespace OOIO;
 #       OOIO\IO;
 #
 #   $select = new Selector;
-#   $select->register(IO::open("php://stdin"), 'r');
+#   $select->register(IO::stdin(), 'r');
 #
 #   list($r) = $selector->select();
 #
@@ -33,13 +33,13 @@ class Selector
         # List of streams to watch for becoming readable.
         $read = array(),
 
-        # List of strreams to watch for becoming writable.
+        # List of streams to watch for becoming writable.
         $write = array(),
 
         # List of streams to watch for errors.
         $except = array(),
 
-        # Maps FDs to stream instances.
+        # Maps file descriptors to stream instances.
         $streams = array();
 
     # Checks which registered streams are ready.
