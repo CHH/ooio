@@ -2,7 +2,7 @@
 
 namespace OOIO;
 
-class Stat extends \Jack\Struct
+class Stat
 {
     public
         $dev,
@@ -19,8 +19,29 @@ class Stat extends \Jack\Struct
         $blksize,
         $blocks;
 
-    function __construct($stats)
+    function __construct($stream)
     {
-        parent::__construct($stats, true);
+        if (is_string($stream)) {
+            if (!realpath($stream)) {
+                throw new FileNotFoundException("File '$stream' not found.");
+            }
+
+            $this->load(\stat($stream));
+
+        } else if (is_resource($stream)) {
+            $this->load(\fstat($stream));
+
+        } else {
+            throw new \InvalidArgumentException(sprintf(
+                "Constructor expects either a file name or a resource."
+            ));
+        }
+    }
+
+    protected function load($stat)
+    {
+        foreach ($stat as $key => $val) {
+            $this->{$key} = $val;
+        }
     }
 }
