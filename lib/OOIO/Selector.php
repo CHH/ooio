@@ -21,13 +21,14 @@ namespace OOIO;
 #
 class Selector
 {
-    const WATCH_READ = 'r';
-    const WATCH_WRITE = 'w';
-    const WATCH_EXCEPT = 'e';
+    const
+        WATCH_READ = 'r',
+        WATCH_WRITE = 'w',
+        WATCH_EXCEPT = 'e',
 
-    # Use this timeout value to return immediately from
-    # the select() call, even when no stream is ready.
-    const TV_NOWAIT = 0;
+        # Use this timeout value to return immediately from
+        # the select() call, even when no stream is ready.
+        TV_NOWAIT = 0;
 
     protected
         # List of streams to watch for becoming readable.
@@ -83,16 +84,16 @@ class Selector
     #
     # Examples
     #
-    #   $s = IO::select();
-    #   $p = IO::pipe();
+    #   $select = IO::select();
+    #   $pipe = IO::pipe();
     #
-    #   $s->register($p[1], 'r');
+    #   $select->register($pipe[1], 'r');
     #
-    #   $p[0]->puts("Hello World!");
+    #   $pipe[0]->puts("Hello World!");
     #
-    #   list($r) = $s->select(0);
+    #   list($readable) = $s->select(0);
     #
-    #   echo count($r);
+    #   echo count($readable);
     #   # Output:
     #   # 1
     #
