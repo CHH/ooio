@@ -32,6 +32,11 @@ class Stream
         return $this->stream;
     }
 
+    function copy(FileDescriptor $fd)
+    {
+        stream_copy_to_stream($this->stream, $fd->toFileDescriptor());
+    }
+
     # Writes the string to the stream.
     #
     # data
