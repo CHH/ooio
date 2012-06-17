@@ -3,12 +3,14 @@
 namespace OOIO\Socket;
 
 use OOIO\Exception,
-    OOIO\FileDescriptor;
+    OOIO\FileDescriptor,
+    OOIO\Closeable;
 
-class Listener implements FileDescriptor
+class Listener implements FileDescriptor, Closeable
 {
     protected
-        $socket;
+        $socket,
+        $closed = false;
 
     # Constructor
     #
@@ -28,6 +30,17 @@ class Listener implements FileDescriptor
     function toFileDescriptor()
     {
         return $this->socket;
+    }
+
+    function close()
+    {
+        $this->closed = true;
+        fclose($this->socket);
+    }
+
+    function isClosed()
+    {
+        return $this->closed;
     }
 
     function getName()
