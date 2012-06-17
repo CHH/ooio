@@ -32,15 +32,21 @@ class Stream
         return $this->stream;
     }
 
+    # Copies the contents of this stream over to the
+    # other stream.
+    #
+    # fd - Object implementing the FileDescriptor interface.
+    #
+    # Returns the total count of bytes copied.
     function copy(FileDescriptor $fd)
     {
-        stream_copy_to_stream($this->stream, $fd->toFileDescriptor());
+        return stream_copy_to_stream($this->stream, $fd->toFileDescriptor());
     }
 
-    # Writes the string to the stream.
+    # Writes the bytes to the stream.
     #
-    # data
-    # length
+    # dataa  - Bytes to write.
+    # length - Length to write (default: all).
     #
     # Returns the number of bytes written, or False on error.
     function write($data, $length = null)
@@ -63,7 +69,7 @@ class Stream
     # Writes the string to the stream, delimited by a line separator.
     #
     # data      - Data as String.
-    # separator - Separator which should get appended to data, defaults to PHP_EOL.
+    # separator - Separator which should get appended to data (default: PHP_EOL).
     #
     # Returns the number of bytes written or False on error.
     function puts($data, $separator = PHP_EOL)

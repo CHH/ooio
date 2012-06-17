@@ -2,7 +2,7 @@
 
 namespace OOIO;
 
-use OOIO\Socket\Server,
+use OOIO\Socket\Listener,
     OOIO\Stream;
 
 class Socket
@@ -17,22 +17,25 @@ class Socket
     {
     }
 
-    static function tcpServer($host, $port)
+    static function listen($proto, $spec)
     {
-        $uri = "tcp://$host:$port";
-        return new Server($uri);
+        $uri = "$proto://$spec";
+        return new Listener($uri);
     }
 
-    static function udpServer($host, $port)
+    static function listenTCP($host, $port)
     {
-        $uri = "udp://$host:$port";
-        return new Server($uri);
+        return static::listen("tcp", "$host:$port");
     }
 
-    static function unixServer($filename)
+    static function listenUDP($host, $port)
     {
-        $uri = "unix://$filename";
-        return new Server($uri);
+        return static::listen("udp", "$host:$port");
+    }
+
+    static function listenUnix($filename)
+    {
+        return static::listen("unix", $filename);
     }
 }
 

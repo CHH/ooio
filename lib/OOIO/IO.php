@@ -11,6 +11,12 @@ class IO
         return $context ?: $context = new StreamContext(stream_context_get_default());
     }
 
+    static function withContext($callable)
+    {
+        $context = new StreamContext;
+        return call_user_func($context);
+    }
+
     # Opens the given filename (URI) with the mode and
     # returns a new Stream instance.
     #
@@ -59,21 +65,21 @@ class IO
     static function stderr()
     {
         static $stderr;
-        return $stderr ?: $stderr = new Stream(STDERR);
+        return $stderr ?: $stderr = static::open("php://stderr");
     }
 
     # Returns the script's Standard Output Stream.
     static function stdout()
     {
         static $stdout;
-        return $stdout ?: $stdout = new Stream(STDOUT);
+        return $stdout ?: $stdout = static::open("php://stdout");
     }
 
     # Returns the script's Input Stream.
     static function stdin()
     {
         static $stdin;
-        return $stdin ?: $stdin = new Stream(STDIN);
+        return $stdin ?: $stdin = static::open("php://stdin");
     }
 
     # Returns information about the filename.
