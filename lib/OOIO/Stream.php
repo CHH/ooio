@@ -159,11 +159,6 @@ class Stream
         return fseek($this->stream, $offset, $whence);
     }
 
-    function setBlocking($mode = true)
-    {
-        stream_set_blocking($this->stream, $mode);
-    }
-
     function rewind()
     {
         $this->assertNotClosed();
@@ -212,6 +207,11 @@ class Stream
     function isTty()
     {
         return posix_isatty($this->stream);
+    }
+
+    function setBlocking($mode = true)
+    {
+        stream_set_blocking($this->stream, (int) $mode);
     }
 
     # Throws an ClosedException when the Stream was closed
