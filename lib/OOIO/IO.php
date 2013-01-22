@@ -99,6 +99,23 @@ class IO
     }
 
     /**
+     * Memory or temp backed stream
+     * 
+     * @param $useTemp - TRUE to use temp backed stream php://temp
+     * @param $initWith - writes this string or stream to the newly created stream and rewinds it
+     * 
+     * @return Stream
+     */
+    public static function memory($useTemp = true, $initWith = null) {
+        $stream = static::open($useTemp ? "php://temp" : "php://memory", "w+b");
+        if ($initWith) {
+            $stream->write($initWith);
+            $stream->rewind();
+        }
+        return $stream;
+    }
+
+    /**
      * Returns information about the filename.
      *
      * @param $filename Filename as String.
