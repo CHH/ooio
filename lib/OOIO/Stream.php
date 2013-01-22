@@ -198,6 +198,12 @@ class Stream
         return rewind($this->stream);
     }
 
+    public function tell() 
+    {
+        $this->assertNotClosed();
+        return ftell($this->stream);
+    }
+    
     /**
      * Flushs the write buffer.
      *
