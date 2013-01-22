@@ -29,6 +29,15 @@ class Stream
         $this->stream = $stream;
     }
 
+    /** 
+     * Ensures the Stream wrapper on the object/descriptor
+     * @return Stream
+     */
+    public static function ensure($stream) {
+        if ($stream instanceof Stream) return $stream;
+        return new Stream($stream);
+    }    
+    
     function toFileDescriptor()
     {
         return $this->stream;
