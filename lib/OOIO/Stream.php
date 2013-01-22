@@ -49,15 +49,21 @@ class Stream
      * Copies the contents of this stream over to the
      * other stream.
      *
-     * @param $fd Object implementing the FileDescriptor interface.
+     * @param $destination Copy destination object implementing the FileDescriptor interface.
      *
      * @return the total count of bytes copied.
      */
-    function copy(FileDescriptor $fd, $maxLength = -1, $offset = 0)
+    function copy(FileDescriptor $destination, $maxLength = -1, $offset = 0)
     {
         if ($maxLength === null) $maxLength = -1;
-        return stream_copy_to_stream($this->stream, $fd->toFileDescriptor(), $maxLength, $offset);
+        return stream_copy_to_stream($this->stream, $destination->toFileDescriptor(), $maxLength, $offset);
     }
+    
+    function copyFrom(FileDescriptor $source, $maxLength = -1, $offset = 0)
+    {
+        if ($maxLength === null) $maxLength = -1;
+        return stream_copy_to_stream($source->toFileDescriptor(), $this->stream, $maxLength, $offset);
+    }    
 
     /**
      * Writes the bytes to the stream.
@@ -71,7 +77,7 @@ class Stream
     {
         $this->assertNotClosed();
 
-        if ($data instanceof Stream) return $this->copy($data, $length);
+        if ($data instanceof FileDescriptor) return $this->copyFrom($data, $length);
         if ($length < 0) $length = null;
         
         if ($length === null) {
