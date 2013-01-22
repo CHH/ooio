@@ -18,6 +18,8 @@ class Stream
     # stream - Stream resource.
     function __construct($stream)
     {
+        if ($stream instanceof FileDescriptor) $stream = $stream->toFileDescriptor();
+        
         if (!is_resource($stream)) {
             throw new InvalidArgumentException(
                 "Constructor expects a valid resource as first argument."
