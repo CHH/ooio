@@ -2,23 +2,24 @@
 
 namespace OOIO;
 
-# Public: Watches stream instances for stream events.
-#
-# Examples
-#
-#   <?php
-#   use OOIO\Selector,
-#       OOIO\IO;
-#
-#   $select = new Selector;
-#   $select->register(IO::stdin(), 'r');
-#
-#   list($r) = $selector->select();
-#
-#   if ($r) {
-#       echo "You entered ".$r[0]->gets()."\n";
-#   }
-#
+/**
+ * Public: Watches stream instances for stream events.
+ *
+ * Examples
+ *
+ *   <?php
+ *   use OOIO\Selector,
+ *       OOIO\IO;
+ *
+ *   $select = new Selector;
+ *   $select->register(IO::stdin(), 'r');
+ *
+ *   list($r) = $selector->select();
+ *
+ *   if ($r) {
+ *       echo "You entered ".$r[0]->gets()."\n";
+ *   }
+ */
 class Selector
 {
     const
@@ -26,35 +27,49 @@ class Selector
         WATCH_WRITE = 'w',
         WATCH_EXCEPT = 'e',
 
-        # Use this timeout value to return immediately from
-        # the select() call, even when no stream is ready.
+        /**
+         * Use this timeout value to return immediately from
+         * the select() call, even when no stream is ready.
+         */
         TV_NOWAIT = 0;
 
     protected
-        # List of streams to watch for becoming readable.
+        /**
+         * List of streams to watch for becoming readable.
+         */
         $read = array(),
 
-        # List of streams to watch for becoming writable.
+        /**
+         * List of streams to watch for becoming writable.
+         */
         $write = array(),
 
-        # List of streams to watch for errors.
+        /**
+         * List of streams to watch for errors.
+         */
         $except = array(),
 
-        # Maps file descriptors to stream instances.
+        /**
+         * Maps file descriptors to stream instances.
+         */
         $streams = array();
 
-    # Checks which registered streams are ready.
-    #
-    # timeout - Timeout in microseconds.
-    #
-    # Returns the readable, writeable and error'd streams as three lists.
+    /**
+     * Checks which registered streams are ready.
+     *
+     * @param $timeout Timeout in microseconds.
+     *
+     * @return array the readable, writeable and error'd streams as three lists.
+     */
     function select($timeout = null)
     {
         $read = $this->read;
         $write = $this->write;
         $except = $this->except;
 
-        # Response is a list of read, write, except lists of streams (in that order).
+        /**
+         * Response is a list of read, write, except lists of streams (in that order).
+         */
         $resp = array(array(), array(), array());
 
         @stream_select($read, $write, $except, $timeout === null ? null : 0, $timeout);
@@ -74,29 +89,31 @@ class Selector
         return $resp;
     }
 
-    # Public: Registers the stream.
-    #
-    # stream - Stream instance.
-    # modes  - A string of mode(s). Valid modes include:
-    #            r: Monitor for data available.
-    #            w: Monitor for data writeable.
-    #            e: Monitor for errors.
-    #
-    # Examples
-    #
-    #   $select = IO::select();
-    #   $pipe = IO::pipe();
-    #
-    #   $select->register($pipe[1], 'r');
-    #
-    #   $pipe[0]->puts("Hello World!");
-    #
-    #   list($readable) = $s->select(0);
-    #
-    #   echo count($readable);
-    #   # Output:
-    #   # 1
-    #
+    /**
+     * Public: Registers the stream.
+     *
+     * @param $stream Stream instance.
+     * @param $modes A string of mode(s). Valid modes include:
+     *            r: Monitor for data available.
+     *            w: Monitor for data writeable.
+     *            e: Monitor for errors.
+     *
+     * Examples
+     *
+     *   $select = IO::select();
+     *   $pipe = IO::pipe();
+     *
+     *   $select->register($pipe[1], 'r');
+     *
+     *   $pipe[0]->puts("Hello World!");
+     *
+     *   list($readable) = $s->select(0);
+     *
+     *   echo count($readable);
+     *   # Output:
+     *   # 1
+     *
+     */
     function register(FileDescriptor $stream, $modes)
     {
         $fd = $stream->toFileDescriptor();
@@ -117,18 +134,21 @@ class Selector
             }
         }
 
-        # Store the stream instance, so we can return it in select()
-        # instead of the FD.
+        /**
+         * Store the stream instance, so we can return it in select()
+         * instead of the FD.
+         */
         $this->streams[(int) $fd] = $stream;
 
         return $this;
     }
 
-    # Public: Unregister the stream instance.
-    #
-    # stream - Stream to unregister.
-    #
-    # Returns Nothing.
+    /**
+     * Public: Unregister the stream instance.
+     *
+     * @param $stream Stream to unregister.
+     *
+     */
     function unregister(FileDescriptor $stream)
     {
         $fd = $stream->toFileDescriptor();
