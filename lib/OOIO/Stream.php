@@ -271,4 +271,19 @@ class Stream
     {
         if ($this->closed) throw new ClosedException("Stream is already closed.");
     }
+    
+    
+    public function filterAdd($append, $filtername, $read_write = null, $params = null) {
+        $this->assertNotClosed();
+        if ($append) return stream_filter_append($this->stream, $filtername, $read_write, $params);
+        else return stream_filter_prepend($this->stream, $filtername, $read_write, $params);
+    }
+
+    public function filterAppend($filtername, $read_write = null, $params = null) {
+        return $this->filterAdd(true, $filtername, $read_write, $params);
+    }    
+
+    public function filterPrepend($filtername, $read_write = null, $params = null) {
+        return $this->filterAdd(false, $filtername, $read_write, $params);
+    }    
 }
