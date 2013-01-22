@@ -53,9 +53,10 @@ class Stream
      *
      * @return the total count of bytes copied.
      */
-    function copy(FileDescriptor $fd)
+    function copy(FileDescriptor $fd, $maxLength = -1, $offset = 0)
     {
-        return stream_copy_to_stream($this->stream, $fd->toFileDescriptor());
+        if ($maxLength === null) $maxLength = -1;
+        return stream_copy_to_stream($this->stream, $fd->toFileDescriptor(), $maxLength, $offset);
     }
 
     /**
@@ -70,6 +71,9 @@ class Stream
     {
         $this->assertNotClosed();
 
+        if ($data instanceof Stream) return $this->copy($data, $length);
+        if ($length < 0) $length = null;
+        
         if ($length === null) {
             $bytes = fwrite($this->stream, (string) $data);
         } else {
@@ -134,7 +138,7 @@ class Stream
     {
         $this->assertNotClosed();
 
-        if ($length === null) {
+        if ($length === null || $length < 0) {
             return stream_get_contents($this->stream);
         }
         return fread($this->stream, $length);
