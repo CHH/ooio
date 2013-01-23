@@ -106,7 +106,8 @@ class IO
      * 
      * @return Stream
      */
-    public static function memory($useTemp = true, $initWith = null) {
+    public static function memory($useTemp = true, $initWith = null) 
+    {
         $stream = static::open($useTemp ? "php://temp" : "php://memory", "w+b");
         if ($initWith) {
             $stream->write($initWith);

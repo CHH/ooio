@@ -35,7 +35,8 @@ class Stream
      * Ensures the Stream wrapper on the object/descriptor
      * @return Stream
      */
-    public static function ensure($stream) {
+    public static function ensure($stream) 
+    {
         if ($stream instanceof Stream) return $stream;
         return new Stream($stream);
     }    
@@ -279,17 +280,23 @@ class Stream
     }
     
     
-    public function filterAdd($append, $filtername, $read_write = null, $params = null) {
+    public function filterAdd($append, $filterName, $readWrite = null, $params = null) 
+    {
         $this->assertNotClosed();
-        if ($append) return stream_filter_append($this->stream, $filtername, $read_write, $params);
-        else return stream_filter_prepend($this->stream, $filtername, $read_write, $params);
+        if ($append) {
+            return stream_filter_append($this->stream, $filterName, $readWrite, $params);
+        } else {
+            return stream_filter_prepend($this->stream, $filterName, $readWrite, $params);
+        }
     }
 
-    public function filterAppend($filtername, $read_write = null, $params = null) {
-        return $this->filterAdd(true, $filtername, $read_write, $params);
+    public function filterAppend($filterName, $readWrite = null, $params = null) 
+    {
+        return $this->filterAdd(true, $filterName, $readWrite, $params);
     }    
 
-    public function filterPrepend($filtername, $read_write = null, $params = null) {
-        return $this->filterAdd(false, $filtername, $read_write, $params);
+    public function filterPrepend($filterName, $readWrite = null, $params = null) 
+    {
+        return $this->filterAdd(false, $filterName, $readWrite, $params);
     }    
 }
