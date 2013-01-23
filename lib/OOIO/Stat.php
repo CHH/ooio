@@ -30,7 +30,10 @@ class Stat
 
         } else if (is_resource($stream)) {
             $this->load(\fstat($stream));
-
+        } else if ($stream instanceof FileDescriptor) {
+            $this->load(\fstat($stream->toFileDescriptor()));
+        } else if (is_array($stream)) {
+            $this->load($stream);
         } else {
             throw new \InvalidArgumentException(sprintf(
                 "Constructor expects either a file name or a resource."
